@@ -2,6 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Form Peminjaman Barang Kecamatan Gayamsari</title>
   <style>
     body {
@@ -89,6 +90,41 @@
       max-width: 100px;
       border-radius: 4px;
     }
+
+    @media screen and (max-width: 600px) {
+      body {
+        padding: 10px;
+        background-size: 80px;
+      }
+
+      form, table {
+        padding: 15px;
+        width: 100%;
+      }
+
+      input, textarea, button {
+        font-size: 16px;
+        padding: 10px;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      canvas {
+        width: 100% !important;
+        height: auto !important;
+      }
+
+      th, td {
+        font-size: 12px;
+        padding: 6px;
+      }
+
+      img {
+        max-width: 70px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -155,7 +191,7 @@
   }
 
   window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
+  window.addEventListener('load', resizeCanvas);
 
   function getPos(e) {
     const rect = canvas.getBoundingClientRect();
@@ -192,7 +228,6 @@
   canvas.addEventListener('mousemove', draw);
   canvas.addEventListener('mouseup', endDraw);
   canvas.addEventListener('mouseleave', endDraw);
-
   canvas.addEventListener('touchstart', startDraw);
   canvas.addEventListener('touchmove', draw);
   canvas.addEventListener('touchend', endDraw);
@@ -225,11 +260,7 @@
     const reader = new FileReader();
     reader.onload = function() {
       const fotoBarang = reader.result;
-
-      const data = {
-        nama, barang, jumlah, waktu, keperluan, tandaTangan, fotoBarang, status: 'Dipinjam'
-      };
-
+      const data = { nama, barang, jumlah, waktu, keperluan, tandaTangan, fotoBarang, status: 'Dipinjam' };
       peminjamanList.push(data);
       localStorage.setItem('peminjaman', JSON.stringify(peminjamanList));
       form.reset();
