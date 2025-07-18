@@ -2,270 +2,307 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <title>Form Peminjaman Barang Kecamatan Gayamsari</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pelaporan Pelanggaran Perda - Gayamsari</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background: url('https://upload.wikimedia.org/wikipedia/id/9/91/Lambang_Kota_Semarang.png') no-repeat center top fixed;
-      background-size: 120px;
       background-color: #fff5f5;
+      color: #333;
+      margin: 0;
+      padding: 0;
     }
 
-    h2 {
+    header {
+      background-color: #b00020;
+      color: white;
+      padding: 1em;
       text-align: center;
-      color: #b30000;
+      background-image: url('https://upload.wikimedia.org/wikipedia/id/7/74/Lambang_Kota_Semarang.png');
+      background-repeat: no-repeat;
+      background-position: 10px center;
+      background-size: 60px;
+      padding-left: 80px;
     }
 
-    form, table {
-      max-width: 850px;
-      margin: 20px auto;
-      background: #fff;
-      border: 2px solid #b30000;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    main {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    form {
+      background-color: #ffe5e5;
+      padding: 20px;
+      border: 2px solid #b00020;
+      border-radius: 8px;
     }
 
     label {
       display: block;
-      margin-top: 10px;
-      color: #900000;
+      margin-top: 12px;
       font-weight: bold;
+      color: #b00020;
     }
 
-    input, textarea, button {
+    input, select {
       width: 100%;
-      padding: 10px;
+      padding: 8px;
       margin-top: 5px;
-      border: 1px solid #cc0000;
-      border-radius: 5px;
-      font-size: 1rem;
-    }
-
-    input:focus, textarea:focus {
-      outline: none;
-      border-color: #ff0000;
+      border: 1px solid #b00020;
+      border-radius: 4px;
     }
 
     button {
-      background-color: #cc0000;
+      margin-top: 20px;
+      background-color: #b00020;
       color: white;
+      border: none;
+      padding: 10px 20px;
       cursor: pointer;
-      margin-top: 15px;
+      border-radius: 4px;
+      font-weight: bold;
     }
 
     button:hover {
-      background-color: #a80000;
-    }
-
-    canvas {
-      border: 1px solid #ccc;
-      margin-top: 10px;
-      display: block;
-      touch-action: none;
+      background-color: #880017;
     }
 
     table {
+      width: 100%;
       border-collapse: collapse;
       margin-top: 30px;
-      width: 100%;
+      background-color: #fffafa;
     }
 
     th, td {
       padding: 10px;
-      border: 1px solid #aaa;
+      border: 1px solid #b00020;
       text-align: center;
-      vertical-align: middle;
     }
 
     th {
-      background-color: #ffcccc;
-      color: #800000;
+      background-color: #b00020;
+      color: white;
     }
 
-    img {
-      max-width: 100px;
+    img.preview {
+      width: 80px;
+      height: auto;
+      border: 1px solid #b00020;
       border-radius: 4px;
+    }
+
+    canvas {
+      margin-top: 40px;
+    }
+
+    .filter-container {
+      margin-top: 30px;
+      padding: 15px;
+      background-color: #ffe5e5;
+      border: 2px solid #b00020;
+      border-radius: 8px;
+    }
+
+    .filter-container input {
+      max-width: 200px;
+    }
+
+    a {
+      color: #b00020;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* ✅ RESPONSIVE STYLE */
+    @media screen and (max-width: 600px) {
+      header {
+        font-size: 14px;
+        padding-left: 70px;
+        background-size: 40px;
+      }
+
+      form, .filter-container {
+        padding: 15px;
+      }
+
+      label {
+        margin-top: 10px;
+      }
+
+      input, select, button {
+        font-size: 14px;
+        padding: 8px;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      img.preview {
+        width: 60px;
+      }
+
+      table {
+        font-size: 12px;
+        overflow-x: auto;
+        display: block;
+      }
+
+      canvas {
+        width: 100% !important;
+        height: auto !important;
+      }
     }
   </style>
 </head>
 <body>
 
-<h2>Form Peminjaman Barang<br>Kecamatan Gayamsari</h2>
+<header>
+  <h2>Pelaporan Pelanggaran Perda<br>Kecamatan Gayamsari</h2>
+</header>
 
-<form id="formPeminjaman">
-  <label>Nama Peminjam:</label>
-  <input type="text" id="nama" required />
+<main>
+  <form id="reportForm">
+    <label>Tanggal Pelaporan:</label>
+    <input type="date" id="tanggal" required>
 
-  <label>Nama Barang:</label>
-  <input type="text" id="barang" required />
+    <label>Nama Pelapor:</label>
+    <input type="text" id="nama" required>
 
-  <label>Jumlah Barang:</label>
-  <input type="number" id="jumlah" required min="1" />
+    <label>Jenis Pelanggaran:</label>
+    <select id="jenis" required>
+      <option value="">-- Pilih --</option>
+      <option value="PKL liar">PKL liar</option>
+      <option value="Bangunan Liar">Bangunan Liar</option>
+      <option value="Sampah Tidak Teratur">Sampah Tidak Teratur</option>
+      <option value="Pelanggaran Reklame">Pelanggaran Reklame</option>
+    </select>
 
-  <label>Waktu Peminjaman:</label>
-  <input type="datetime-local" id="waktu" required />
+    <label>Foto Laporan:</label>
+    <input type="file" id="foto" accept="image/*" required>
 
-  <label>Keperluan:</label>
-  <textarea id="keperluan" rows="3" required></textarea>
+    <label>Lokasi Pelanggaran:</label>
+    <input type="text" id="lokasi" placeholder="Contoh: Jl. Gajah Raya No. 23 atau koordinat" required>
 
-  <label>Foto Barang:</label>
-  <input type="file" id="fotoBarang" accept="image/*" required />
+    <button type="submit">Kirim Laporan</button>
+  </form>
 
-  <label>Tanda Tangan:</label>
-  <canvas id="signature" width="300" height="150"></canvas>
-  <button type="button" onclick="clearSignature()">Hapus Tanda Tangan</button>
+  <div class="filter-container">
+    <label>Filter berdasarkan tanggal:</label>
+    <input type="date" id="filterTanggal">
+    <button onclick="tampilkanSemuaData()">Reset Filter</button>
+  </div>
 
-  <button type="submit">Simpan Peminjaman</button>
-</form>
+  <table id="laporanTable">
+    <thead>
+      <tr>
+        <th>Tanggal</th>
+        <th>Nama</th>
+        <th>Jenis</th>
+        <th>Foto</th>
+        <th>Lokasi</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-<h2>Riwayat Peminjaman</h2>
-<table>
-  <thead>
-    <tr>
-      <th>Nama</th>
-      <th>Barang</th>
-      <th>Jumlah</th>
-      <th>Waktu</th>
-      <th>Keperluan</th>
-      <th>Foto</th>
-      <th>Tanda Tangan</th>
-      <th>Status</th>
-      <th>Aksi</th>
-    </tr>
-  </thead>
-  <tbody id="tabelRiwayat"></tbody>
-</table>
+  <canvas id="chartLaporan" width="400" height="200"></canvas>
+</main>
 
 <script>
-  const canvas = document.getElementById('signature');
-  const ctx = canvas.getContext('2d');
-  let isDrawing = false;
+  const form = document.getElementById('reportForm');
+  const tableBody = document.querySelector('#laporanTable tbody');
+  const chartCanvas = document.getElementById('chartLaporan');
+  const filterTanggal = document.getElementById('filterTanggal');
 
-  function resizeCanvas() {
-    if (window.innerWidth < 600) {
-      canvas.width = window.innerWidth - 40;
-    } else {
-      canvas.width = 300;
-    }
-    canvas.height = 150;
-    clearSignature();
-  }
-
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
-
-  function getPos(e) {
-    const rect = canvas.getBoundingClientRect();
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    return {
-      x: clientX - rect.left,
-      y: clientY - rect.top
-    };
-  }
-
-  function startDraw(e) {
-    e.preventDefault();
-    isDrawing = true;
-    const pos = getPos(e);
-    ctx.beginPath();
-    ctx.moveTo(pos.x, pos.y);
-  }
-
-  function draw(e) {
-    if (!isDrawing) return;
-    e.preventDefault();
-    const pos = getPos(e);
-    ctx.lineTo(pos.x, pos.y);
-    ctx.stroke();
-  }
-
-  function endDraw(e) {
-    e.preventDefault();
-    isDrawing = false;
-  }
-
-  canvas.addEventListener('mousedown', startDraw);
-  canvas.addEventListener('mousemove', draw);
-  canvas.addEventListener('mouseup', endDraw);
-  canvas.addEventListener('mouseleave', endDraw);
-
-  canvas.addEventListener('touchstart', startDraw);
-  canvas.addEventListener('touchmove', draw);
-  canvas.addEventListener('touchend', endDraw);
-  canvas.addEventListener('touchcancel', endDraw);
-
-  function clearSignature() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
-
-  const form = document.getElementById('formPeminjaman');
-  const tbody = document.getElementById('tabelRiwayat');
-  let peminjamanList = JSON.parse(localStorage.getItem('peminjaman')) || [];
+  let laporanData = JSON.parse(localStorage.getItem('laporanData')) || [];
 
   form.addEventListener('submit', function(e) {
     e.preventDefault();
 
+    const tanggal = document.getElementById('tanggal').value;
     const nama = document.getElementById('nama').value;
-    const barang = document.getElementById('barang').value;
-    const jumlah = document.getElementById('jumlah').value;
-    const waktu = document.getElementById('waktu').value;
-    const keperluan = document.getElementById('keperluan').value;
-    const tandaTangan = canvas.toDataURL();
-    const fotoFile = document.getElementById('fotoBarang').files[0];
-
-    if (!fotoFile) {
-      alert("Mohon unggah foto barang.");
-      return;
-    }
+    const jenis = document.getElementById('jenis').value;
+    const lokasi = document.getElementById('lokasi').value;
+    const fotoInput = document.getElementById('foto');
+    const file = fotoInput.files[0];
+    if (!file) return alert('Foto wajib diisi');
 
     const reader = new FileReader();
-    reader.onload = function() {
-      const fotoBarang = reader.result;
-
-      const data = {
-        nama, barang, jumlah, waktu, keperluan, tandaTangan, fotoBarang, status: 'Dipinjam'
-      };
-
-      peminjamanList.push(data);
-      localStorage.setItem('peminjaman', JSON.stringify(peminjamanList));
+    reader.onloadend = function() {
+      const fotoURL = reader.result;
+      const laporan = { tanggal, nama, jenis, fotoURL, lokasi };
+      laporanData.push(laporan);
+      localStorage.setItem('laporanData', JSON.stringify(laporanData));
+      tampilkanSemuaData();
       form.reset();
-      clearSignature();
-      tampilkanRiwayat();
     };
-    reader.readAsDataURL(fotoFile);
+    reader.readAsDataURL(file);
   });
 
-  function tampilkanRiwayat() {
-    tbody.innerHTML = '';
-    peminjamanList.forEach((item, index) => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${item.nama}</td>
-        <td>${item.barang}</td>
-        <td>${item.jumlah}</td>
-        <td>${item.waktu}</td>
-        <td>${item.keperluan}</td>
-        <td><img src="${item.fotoBarang}" alt="Foto Barang"/></td>
-        <td><img src="${item.tandaTangan}" alt="Tanda Tangan"/></td>
-        <td>${item.status}</td>
-        <td>${item.status === 'Dipinjam' ? `<button onclick="kembalikan(${index})">Kembalikan</button>` : '-'}</td>
-      `;
-      tbody.appendChild(row);
+  function tambahBarisTabel(data) {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${data.tanggal}</td>
+      <td>${data.nama}</td>
+      <td>${data.jenis}</td>
+      <td><img src="${data.fotoURL}" class="preview"></td>
+      <td><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.lokasi)}" target="_blank">${data.lokasi}</a></td>
+    `;
+    tableBody.appendChild(row);
+  }
+
+  function tampilkanSemuaData() {
+    const filter = filterTanggal.value;
+    tableBody.innerHTML = '';
+    const filtered = filter
+      ? laporanData.filter(l => l.tanggal === filter)
+      : laporanData;
+
+    filtered.forEach(tambahBarisTabel);
+    updateChart(filtered);
+  }
+
+  let chart;
+  function updateChart(dataSet = laporanData) {
+    const count = {};
+    dataSet.forEach(l => {
+      count[l.jenis] = (count[l.jenis] || 0) + 1;
+    });
+
+    const jenis = Object.keys(count);
+    const jumlah = Object.values(count);
+
+    if (chart) chart.destroy();
+
+    chart = new Chart(chartCanvas, {
+      type: 'bar',
+      data: {
+        labels: jenis,
+        datasets: [{
+          label: 'Jumlah Pelanggaran',
+          data: jumlah,
+          backgroundColor: '#b00020'
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true, ticks: { stepSize: 1 } }
+        }
+      }
     });
   }
 
-  function kembalikan(index) {
-    peminjamanList[index].status = 'Dikembalikan';
-    localStorage.setItem('peminjaman', JSON.stringify(peminjamanList));
-    tampilkanRiwayat();
-  }
-
-  tampilkanRiwayat();
+  tampilkanSemuaData();
 </script>
 
 </body>
 </html>
+
