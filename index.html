@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -13,12 +15,10 @@
       background-size: 120px;
       background-color: #fff5f5;
     }
-
     h2 {
       text-align: center;
       color: #b30000;
     }
-
     form, table {
       max-width: 850px;
       margin: 20px auto;
@@ -28,14 +28,12 @@
       border-radius: 12px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
-
     label {
       display: block;
       margin-top: 10px;
       color: #900000;
       font-weight: bold;
     }
-
     input, textarea, button {
       width: 100%;
       padding: 10px;
@@ -44,86 +42,30 @@
       border-radius: 5px;
       font-size: 1rem;
     }
-
     input:focus, textarea:focus {
       outline: none;
       border-color: #ff0000;
     }
-
     button {
       background-color: #cc0000;
       color: white;
       cursor: pointer;
       margin-top: 15px;
     }
-
     button:hover {
       background-color: #a80000;
     }
-
     canvas {
       border: 1px solid #ccc;
       margin-top: 10px;
       display: block;
       touch-action: none;
     }
-
-    table {
-      border-collapse: collapse;
-      margin-top: 30px;
-      width: 100%;
-    }
-
-    th, td {
-      padding: 10px;
-      border: 1px solid #aaa;
-      text-align: center;
-      vertical-align: middle;
-    }
-
-    th {
-      background-color: #ffcccc;
-      color: #800000;
-    }
-
-    img {
-      max-width: 100px;
-      border-radius: 4px;
-    }
-
     @media screen and (max-width: 600px) {
-      body {
-        padding: 10px;
-        background-size: 80px;
-      }
-
-      form, table {
-        padding: 15px;
-        width: 100%;
-      }
-
-      input, textarea, button {
-        font-size: 16px;
-        padding: 10px;
-      }
-
-      button {
-        width: 100%;
-      }
-
-      canvas {
-        width: 100% !important;
-        height: auto !important;
-      }
-
-      th, td {
-        font-size: 12px;
-        padding: 6px;
-      }
-
-      img {
-        max-width: 70px;
-      }
+      body { padding: 10px; background-size: 80px; }
+      form { padding: 15px; width: 100%; }
+      input, textarea, button { font-size: 16px; padding: 10px; }
+      canvas { width: 100% !important; height: auto !important; }
     }
   </style>
 </head>
@@ -154,26 +96,8 @@
   <canvas id="signature" width="300" height="150"></canvas>
   <button type="button" onclick="clearSignature()">Hapus Tanda Tangan</button>
 
-  <button type="submit">Simpan Peminjaman</button>
+  <button type="submit">Kirim</button>
 </form>
-
-<h2>Riwayat Peminjaman</h2>
-<table>
-  <thead>
-    <tr>
-      <th>Nama</th>
-      <th>Barang</th>
-      <th>Jumlah</th>
-      <th>Waktu</th>
-      <th>Keperluan</th>
-      <th>Foto</th>
-      <th>Tanda Tangan</th>
-      <th>Status</th>
-      <th>Aksi</th>
-    </tr>
-  </thead>
-  <tbody id="tabelRiwayat"></tbody>
-</table>
 
 <script>
   const canvas = document.getElementById('signature');
@@ -197,10 +121,7 @@
     const rect = canvas.getBoundingClientRect();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    return {
-      x: clientX - rect.left,
-      y: clientY - rect.top
-    };
+    return { x: clientX - rect.left, y: clientY - rect.top };
   }
 
   function startDraw(e) {
@@ -238,9 +159,6 @@
   }
 
   const form = document.getElementById('formPeminjaman');
-  const tbody = document.getElementById('tabelRiwayat');
-  let peminjamanList = JSON.parse(localStorage.getItem('peminjaman')) || [];
-
   form.addEventListener('submit', function(e) {
     e.preventDefault();
 
@@ -260,43 +178,23 @@
     const reader = new FileReader();
     reader.onload = function() {
       const fotoBarang = reader.result;
-      const data = { nama, barang, jumlah, waktu, keperluan, tandaTangan, fotoBarang, status: 'Dipinjam' };
-      peminjamanList.push(data);
-      localStorage.setItem('peminjaman', JSON.stringify(peminjamanList));
-      form.reset();
-      clearSignature();
-      tampilkanRiwayat();
+      const data = { nama, barang, jumlah, waktu, keperluan, tandaTangan, fotoBarang };
+
+      fetch("https://script.google.com/macros/s/AKfycbwwiuXJRsHYPYGd4iEYXBPx4hc0MsAWwPNf532sWC-vbI7T1K56IAJ0fJo9VelADsc/exec", {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      }).then(() => {
+        alert("Data berhasil dikirim!");
+        form.reset();
+        clearSignature();
+      }).catch(() => {
+        alert("Gagal mengirim data. Periksa koneksi atau endpoint.");
+      });
     };
     reader.readAsDataURL(fotoFile);
   });
-
-  function tampilkanRiwayat() {
-    tbody.innerHTML = '';
-    peminjamanList.forEach((item, index) => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${item.nama}</td>
-        <td>${item.barang}</td>
-        <td>${item.jumlah}</td>
-        <td>${item.waktu}</td>
-        <td>${item.keperluan}</td>
-        <td><img src="${item.fotoBarang}" alt="Foto Barang"/></td>
-        <td><img src="${item.tandaTangan}" alt="Tanda Tangan"/></td>
-        <td>${item.status}</td>
-        <td>${item.status === 'Dipinjam' ? `<button onclick="kembalikan(${index})">Kembalikan</button>` : '-'}</td>
-      `;
-      tbody.appendChild(row);
-    });
-  }
-
-  function kembalikan(index) {
-    peminjamanList[index].status = 'Dikembalikan';
-    localStorage.setItem('peminjaman', JSON.stringify(peminjamanList));
-    tampilkanRiwayat();
-  }
-
-  tampilkanRiwayat();
 </script>
-
 </body>
 </html>
